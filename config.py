@@ -19,10 +19,15 @@ class AppConfig:
     def get_bonk_bot_key(self):
         main_section = self.config['main']
         return main_section['bonk_bot_token']
+
+    def get_bonk_staff_key(self):
+        main_section = self.config['main']
+        return main_section['bonk_staff_token']
+
     def get_config_dir(self):
         return self.cfg_dir
 
 
 if __name__ == '__main__':
     app_config = AppConfig()
-    print(app_config.get_discord_bot_key())
+    print(app_config.get_bonk_staff_key())
