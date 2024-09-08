@@ -27,30 +27,31 @@ class PlayersDB:
             allplayers_dict = {}
         playerdata = player.to_dict()
         del playerdata["userid"]
-        playerdata["blacklist_until"] = playerdata["blacklist_until"].strftime("%Y-%m-%d %H:%M:%S.%f")
+        if player.blacklist_until:
+            playerdata["blacklist_until"] = playerdata["blacklist_until"].strftime("%Y-%m-%d %H:%M:%S.%f")
         allplayers_dict[player.userid] = playerdata
         with open("players.json", "w") as outfile:
             json.dump(allplayers_dict, outfile)
 
-    def get_player(self, id):
+    def get_player(self, userid):
         try:
             with open("players.json", "r") as players_file:
                 allplayers_dict = json.load(players_file)
         except json.decoder.JSONDecodeError:
             allplayers_dict = {}
-        id = str(id)
-        data = allplayers_dict[id]
-        data["userid"] = id
-        data["blacklist_until"] = datetime.strptime(data["blacklist_until"], "%Y-%m-%d %H:%M:%S.%f")
+        userid = str(userid)
+        data = allplayers_dict[userid]
+        data["userid"] = userid
+        data["blacklist_until"] = datetime.datetime.strptime(data["blacklist_until"], "%Y-%m-%d %H:%M:%S.%f")
         new_player = Player.from_dict(data)
         return new_player
 
 
-id = 3123213123
-player = Player(userid=id, ign="helothere", blacklist_until=datetime.datetime.now())
+userid = 3123213123
+player = Player(userid=userid, ign="helothere", blacklist_until=datetime.datetime.now())
 print(player.blacklist_until)
 playersdb = PlayersDB()
 playersdb.save_player(player)
-new_player = playersdb.get_player(id)
+new_player = playersdb.get_player(userid)
 if new_player == player:
     print("hi")
