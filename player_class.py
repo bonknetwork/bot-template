@@ -45,13 +45,3 @@ class PlayersDB:
         data["blacklist_until"] = datetime.datetime.strptime(data["blacklist_until"], "%Y-%m-%d %H:%M:%S.%f")
         new_player = Player.from_dict(data)
         return new_player
-
-
-userid = 3123213123
-player = Player(userid=userid, ign="helothere", blacklist_until=datetime.datetime.now())
-print(player.blacklist_until)
-playersdb = PlayersDB()
-playersdb.save_player(player)
-new_player = playersdb.get_player(userid)
-if new_player == player:
-    print("hi")
