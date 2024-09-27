@@ -7,7 +7,7 @@ from interactions.api.events import MessageCreate
 from tests.test_contexts import guild
 import discord
 import config
-from player_class import Player, PlayersDB
+from player_utils import Player, PlayersDB
 import time
 
 AppConfig_obj = config.AppConfig()

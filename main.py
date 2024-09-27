@@ -1,15 +1,20 @@
+import attrs
 import interactions
-from interactions import listen, OptionType, slash_option, check, has_role
+from interactions import listen, OptionType, slash_option, check, has_role, Embed, slash_command, SlashContext
 import os
 from interactions.api.events import MessageCreate
+import colors
 import config
-from player_class import Player, PlayersDB
+from player_utils import Player, PlayersDB, translate_time, simple_time_transalte
 import time
+import datetime
 
 AppConfig_obj = config.AppConfig()
 token = AppConfig_obj.get_bonk_staff_key()
 bot = interactions.Client(token=token)
-BONK_STAFF_DEV_ROLE = 1263838065047109642
+CHECK_ROLE = 1282491372250857676
+BASE_PATH = os.path.join(os.getcwd())
+
 
 @listen()
 async def on_ready():
@@ -36,7 +41,7 @@ async def handle_help_command(ctx: interactions.SlashContext):
     required=True,
     opt_type=OptionType.STRING
 )
-@interactions.check(has_role(BONK_STAFF_DEV_ROLE))
+@interactions.check(has_role(CHECK_ROLE))
 async def handle_execute_command(ctx: interactions.SlashContext, channel: interactions.ChannelType, message: str):
     channel = await bot.fetch_channel(channel)
     if channel:
@@ -49,11 +54,37 @@ async def handle_execute_command(ctx: interactions.SlashContext, channel: intera
 @interactions.slash_command(
     name="test",
     description="Run Hard Coded Tests")
-@interactions.check(has_role(BONK_STAFF_DEV_ROLE))
+# @interactions.check(has_role(CHECK_ROLE))
 async def handle_request_command(ctx: interactions.SlashContext):
-    await ctx.send("Running Tests...")
-    ban_log_channel = 1259602927509835818
-    await ctx.send("Test Complete!")
+    embed = Embed(
+        description="Running Tests...",
+        color=colors.DiscordColors.GREEN
+    )
+    msg = await ctx.send(embeds=embed)
+    embed1 = Embed(
+        description="Test Complete!",
+        color=colors.DiscordColors.GREEN
+    )
+    await msg.edit(embeds=embed1)
+
+
+@interactions.slash_command(
+    name="unixtime",
+    description="Convert time to unix timestamp. This command is a test command powered by Duckling."
+)
+@interactions.slash_option(
+    name="time",
+    description="Describe the time you want to convert. Example: 1d, 9/14/24, in one year, in 3 days, etc.",
+    required=True,
+    opt_type=OptionType.STRING
+)
+async def handle_unixtime_command(ctx: interactions.SlashContext, time):
+    try:
+        unix_timestamp = translate_time(time)
+        await ctx.send(
+            f"You asked for the Unix timestamp for the prompt '{time}'.\n This translates to <t:{unix_timestamp}:F> and has a unix timestamp of **{unix_timestamp}**.")
+    except Exception as e:
+        await ctx.send(f"An error occurred: {e}")
 
 
 @interactions.slash_command(
@@ -65,44 +96,29 @@ async def handle_request_command(ctx: interactions.SlashContext):
     required=True,
     opt_type=OptionType.USER
 )
-async def handle_execute_command(ctx: interactions.SlashContext, user):
-    userobj = ctx.guild.get_member(user)
-    user_roles = []
-    print(userobj.roles)
-    for i in userobj.roles:
-        user_roles.append(i)
-    database = PlayersDB()
-    new_player = Player(userid=int(user.id), roles=list(user_roles), blacklisted=True)
-    database.save_player(new_player)
-    await ctx.send("Done!", ephemeral=True)
-
-
-"""
-@interactions.slash_command(
-    name="execute",
-    description="Run a Console Command")
 @interactions.slash_option(
-    name="command",
-    description="What command do you want to run?",
+    name="blacklist_length",
+    description="How long do you want to blacklist this user for?",
     required=True,
     opt_type=OptionType.STRING
 )
-async def handle_execute_command(ctx: interactions.SlashContext, command: str):
-    required_roles = [BONK_STAFF_DEV_ROLE]
-    user_roles = {role.id for role in ctx.author.roles}
-    has_role_perms = False
-    for i in required_roles:
-        if i in user_roles:
-            has_role_perms = True
-    if has_role_perms:
-        channel = await bot.fetch_channel(1271152792207229081)
-        if channel:
-            await channel.send(command)
-            await ctx.send("Command has been sent!", ephemeral=True)
-        else:
-            await ctx.send("Channel not found!", ephemeral=True)
-    else:
-        await ctx.send("You do not have permission to run this command!", ephemeral=True)
-"""
+@interactions.check(has_role(CHECK_ROLE))
+async def handle_blacklist_command(ctx: interactions.SlashContext, user, blacklist_length):
+    userobj = ctx.guild.get_member(user)
+    user_roles = []
+    for i in userobj.roles:
+        user_roles.append(int(i.id))
+    database = PlayersDB()
+    if database.get_player(user.id):
+        await ctx.send("This user is already blacklisted!")
+        return
+    user_id = user.id
+    blacklist_until = translate_time(str(blacklist_length))
+    new_player = Player(userid=user_id, roles=user_roles, blacklisted=True, blacklist_until=blacklist_until)
+    database.save_player(new_player)
+    await user.send(
+        f"You have been blacklisted on Bonk Network! Your blacklist will expire <t:{blacklist_until}:R> on <t:{blacklist_until}:F>.")
+    await ctx.send(f"Done! User <@{user_id}> is blacklisted until <t:{blacklist_until}:F>.")
+
 
 bot.start()
