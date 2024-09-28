@@ -46,6 +46,8 @@ class PlayersDB:
         except json.decoder.JSONDecodeError:
             allplayers_dict = {}
         userid = str(userid)
+        if userid not in allplayers_dict:
+            return None
         data = allplayers_dict[userid]
         data["userid"] = int(userid)
         try:
