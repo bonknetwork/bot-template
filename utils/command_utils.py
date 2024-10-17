@@ -24,9 +24,9 @@ class Player:
     # notes: Optional[dict] = None
     # previous_apps: Optional[dict] = None
 
-
+DEFAULT_FILE_NAME = os.join("data", "players.json")
 class PlayersDB:
-    def __init__(self, file_name="players.json"):
+    def __init__(self, file_name=DEFAULT_FILE_NAME):
         self.file_name = file_name
 
     def save_player(self, player: Player):
