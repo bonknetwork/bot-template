@@ -1,5 +1,7 @@
 import json
 from dataclasses import dataclass, field, asdict
+from json.encoder import INFINITY
+
 from dataclasses_json import dataclass_json
 from typing import Optional, List
 from datetime import datetime, timedelta
@@ -16,9 +18,9 @@ class Player:
     userid: int
     roles: Optional[list] = None
     ign: Optional[str] = None
-    guilds: Optional[str] = None
     blacklisted: Optional[bool] = None
-    blacklist_until: Optional[int] = None
+    blacklist_until: Optional[float] = None
+    blacklist_reason: Optional[str] = None
     # notes: Optional[dict] = None
     # previous_apps: Optional[dict] = None
 
@@ -37,7 +39,7 @@ class PlayersDB:
         del playerdata["userid"]
         allplayers_dict[str(player.userid)] = playerdata
         with open(self.file_name, "w") as outfile:
-            json.dump(allplayers_dict, outfile)
+            json.dump(allplayers_dict, outfile, indent=4)
 
     def get_player(self, userid):
         try:
@@ -55,9 +57,13 @@ class PlayersDB:
         except:
             pass
         retrieved_player = Player.from_dict(data)
+        try:
+            retrieved_player.blacklist_until = int(retrieved_player.blacklist_until)
+        except:
+            pass
         return retrieved_player
 
-def simple_time_transalte(text):
+def simple_time_translate(text):
     time_units = {
         'd': 'days',
         'h': 'hours',
@@ -98,16 +104,17 @@ def simple_time_transalte(text):
     return None
 
 PORT = 9000
-def translate_time(text):
-    unix_timestamp = simple_time_transalte(text)
+IP = "10.1.1.53"
+def translate_time(text, ip=IP, port=PORT):
+    unix_timestamp = simple_time_translate(text)
     if unix_timestamp is not None:
         return unix_timestamp
 
-    # Fallback to Duckling if no match in advanced parser
+    # fallback to Duckling if no match in simple parser
     if not text.startswith("in "):
         text = "in " + text
 
-    response = requests.post(f'http://10.1.1.53:{PORT}/parse', data={'locale': 'en_US', 'text': text})
+    response = requests.post(f'http://{ip}:{port}/parse', data={'locale': 'en_US', 'text': text})
     result = json.loads(response.text)
 
     if result and isinstance(result, list) and 'value' in result[0]['value']:
@@ -124,5 +131,4 @@ def translate_time(text):
 
 
 if __name__ == '__main__':
-    result = translate_time("2days")
-    print(result)
+    print(translate_time("1 month"))
