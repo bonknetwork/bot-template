@@ -4,7 +4,7 @@ import os
 
 # Get Bonk Network bot token and create bot client
 AppConfig_obj = config.AppConfig()
-in_codespace = True
+in_codespace = False
 if in_codespace:
     config_dir = os.getcwd()
     config_dir = os.join(config_dir, "utils")
