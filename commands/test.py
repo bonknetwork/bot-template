@@ -1,8 +1,11 @@
 from interactions import slash_command, SlashContext, Embed
+
+from bot_instance import role_check
 from utils import colors
 
 
 @slash_command(name="test", description="Run predefined tests.")
+@role_check()
 async def handle_test_command(ctx: SlashContext):
     test_start_msg = Embed(description="Running Tests...", color=colors.DiscordColors.GREEN)
     msg = await ctx.send(embeds=test_start_msg)

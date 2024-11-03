@@ -1,0 +1,25 @@
+from interactions import slash_command, slash_option, OptionType, ChannelType, SlashContext
+from bot_instance import bot, role_check
+
+@slash_command(name="ban", description="Ban a user from the server.")
+@slash_option(
+    name="user",
+    description="Who would you like to ban?",
+    required=True,
+    opt_type=OptionType.USER
+)
+@slash_option(
+    name="time",
+    description="How long would you like to ban the user for?",
+    required=False,
+    opt_type=OptionType.STRING
+)
+@slash_option(
+    name="reason",
+    description="Why would you like to ban the user?",
+    required=False,
+    opt_type=OptionType.STRING
+)
+@role_check()
+async def handle_ban_command(ctx: SlashContext, user: ChannelType, time: str = None, reason: str = None):
+    
