@@ -24,7 +24,7 @@ class Player:
     # notes: Optional[dict] = None
     # previous_apps: Optional[dict] = None
 
-DEFAULT_FILE_NAME = os.join("data", "players.json")
+DEFAULT_FILE_NAME = os.path.join("data", "players.json")
 class PlayersDB:
     def __init__(self, file_name=DEFAULT_FILE_NAME):
         self.file_name = file_name
@@ -103,8 +103,8 @@ def simple_time_translate(text):
 
     return None
 
-PORT = 9000
-IP = "10.1.1.53"
+PORT = 8000
+IP = "localhost"
 def translate_time(text, ip=IP, port=PORT):
     unix_timestamp = simple_time_translate(text)
     if unix_timestamp is not None:
