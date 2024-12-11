@@ -4,7 +4,7 @@ from bot_instance import role_check
 from utils import colors
 
 
-@slash_command(name="test", description="Run predefined tests.")
+@slash_command(name="example", description="This is an example of a command description!.")
 @role_check()
 async def handle_test_command(ctx: SlashContext):
     test_start_msg = Embed(description="Running Tests...", color=colors.DiscordColors.GREEN)

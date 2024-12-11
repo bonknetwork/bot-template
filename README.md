@@ -1,2 +1,2 @@
-# Mod Bot
-Code for the Mod Bot discord bot for Bonk Network (https://discord.gg/bonknetwork)
+# Bot Template
+Template for making a discord bot in interactions.py
