@@ -17,9 +17,9 @@ class AppConfig:
         self.config = configparser.ConfigParser()
         self.config.read(self.config_file)
 
-    def get_bonk_staff_key(self):
+    def get_bot_key(self):
         main_section = self.config['main']
-        return main_section['bonk_staff_token']
+        return main_section['bot_token']
 
     def get_config_dir(self):
         return self.cfg_dir
@@ -27,4 +27,4 @@ class AppConfig:
 
 if __name__ == '__main__':
     app_config = AppConfig()
-    print(app_config.get_bonk_staff_key())
+    print(app_config.get_bot_key())
