@@ -1,3 +1,4 @@
+# This is an example of a command. Each command should be a separate file and will be automatically imported and usable.
 from interactions import slash_command, SlashContext, Embed
 
 from bot_instance import role_check
