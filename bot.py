@@ -1,5 +1,5 @@
 from interactions import listen
-from bot_instance import bot  # Import bot and role_check from bot_instance
+from bot_instance import bot
 import os
 for i in os.listdir("commands"):
     if i.endswith(".py"):
@@ -7,7 +7,7 @@ for i in os.listdir("commands"):
 
 @listen()
 async def on_ready():
-    print("Bot has started.")
+    print("Your bot has started.")
 
 # Start the bot
 bot.start()
