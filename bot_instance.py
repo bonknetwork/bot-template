@@ -4,7 +4,7 @@ import os
 
 
 AppConfig_obj = config.AppConfig()
-token = AppConfig_obj.get_bonk_staff_key()
+token = AppConfig_obj.get_bot_key()
 bot = Client(token=token, sync_interactions=True)
 
 
