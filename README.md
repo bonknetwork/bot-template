@@ -11,7 +11,7 @@ Make sure you have the required packages listed in data/requirements.py.
 Run bot.py to start the bot.
 
 ### Configuring your bot token
-In your user home directory, create a folder called ```.pyconfig```. Create a file called ```secrets.ini```, and fill it with the following, replacing BOT_TOKEN with your bot's token:
+In your user home directory, create a folder called ```.pyconfig```. Create a file called ```secrets.ini``` in this folder, and fill it with the following, replacing BOT_TOKEN with your bot's token:
 ```
 [main]
 bot_token=BOT_TOKEN
